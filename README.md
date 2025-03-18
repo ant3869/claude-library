@@ -1,5 +1,5 @@
 # Claude Utility Library
-A comprehensive TypeScript utility library providing robust tools for system monitoring, networking, DOM manipulation, server-side operations, benchmarking, LLM management, and logging.
+A comprehensive TypeScript utility library providing robust tools for system monitoring, networking, DOM manipulation, server-side operations, benchmarking, LLM management, logging, text formatting, UI components, theming, and search algorithms.
 
 ## Features
 - **System Monitoring** - Track CPU, memory, GPU, and network performance in browser environments
@@ -13,6 +13,10 @@ A comprehensive TypeScript utility library providing robust tools for system mon
 - **Benchmarking** - System performance measurement tools
 - **LLM Management** - Clients for working with OpenAI and Anthropic APIs
 - **Logging** - Extensive logging system with multiple transports and formatting options
+- **Text Formatting** - Colorized text, JSON/CSV parsing, and text manipulation utilities
+- **UI Components** - Modal dialogs, toast notifications, banners, and loading indicators
+- **Theme Management** - Flexible theming system with light/dark modes and customization options
+- **Search Algorithms** - Advanced text search with TF-IDF ranking, fuzzy matching, and knowledge base tools
 
 ## Installation
 ```bash
@@ -45,135 +49,219 @@ console.log(report);
 monitor.stop();
 ```
 
-### Networking
+### Text Formatting and Colorizing
 ```typescript
-import { fetchWithRetry, cancellableFetch, debouncedFetch } from 'claude-utility-library/networking';
+import { colorize, parseCSV, csvToJSON } from 'claude-utility-library/formatting';
 
-// Fetch with automatic retry
-const data = await fetchWithRetry('https://api.example.com/data', {
-  method: 'GET',
-  headers: { 'Content-Type': 'application/json' }
-}, 3, 1000);
+// Colorize console output
+console.log(...colorize.browserSuccess('Operation successful!'));
+console.log(...colorize.browserError('Something went wrong!'));
 
-// Cancellable fetch
-const { promise, cancel } = cancellableFetch('https://api.example.com/data');
-// Later if needed:
-cancel();
+// Parse CSV data
+const csvData = `id,name,age\n1,Alice,30\n2,Bob,25`;
+const parsedData = parseCSV(csvData, { hasHeader: true });
+console.log(parsedData);
 
-// Debounced fetch to prevent API spam
-const debouncedFetchFn = debouncedFetch(fetch, 300);
-const response = await debouncedFetchFn('https://api.example.com/search?q=term');
+// Convert CSV to JSON
+const jsonData = csvToJSON(csvData);
+console.log(jsonData);
 ```
 
-### Browser & DOM Utilities
+### UI Components (Modals, Toasts)
 ```typescript
-import { 
-  getElementById, 
-  addEventListener, 
-  createElement, 
-  isInViewport,
-  cookie
-} from 'claude-utility-library/utilities';
+import { Modal, alert, confirm, toast } from 'claude-utility-library/modals';
 
-// Type-safe getElementById
-const button = getElementById<HTMLButtonElement>('submit-button');
+// Show a simple alert
+await alert('Operation completed successfully!', 'Success');
 
-// Easy event handling with automatic cleanup
-const removeListener = addEventListener(window, 'resize', () => {
-  console.log('Window resized');
-});
-
-// Create element with attributes
-const div = createElement('div', { 
-  class: 'container', 
-  'data-id': '123' 
-}, [
-  createElement('h1', {}, ['Hello World']),
-  createElement('p', {}, ['Content goes here'])
-]);
-
-// Check if element is in viewport
-if (isInViewport(button)) {
-  console.log('Button is visible');
+// Show a confirmation dialog
+const confirmed = await confirm('Are you sure you want to delete this item?');
+if (confirmed) {
+  // User clicked OK
+  toast({
+    message: 'Item deleted successfully',
+    type: 'success',
+    duration: 3000
+  });
+} else {
+  // User clicked Cancel
 }
 
-// Cookie management
-cookie.set('theme', 'dark', { maxAge: 86400, path: '/' });
-const theme = cookie.get('theme');
+// Create a custom modal
+const modal = new Modal({
+  title: 'Custom Form',
+  content: `
+    <form id="my-form">
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+      </div>
+    </form>
+  `,
+  actions: [
+    {
+      label: 'Cancel',
+      callback: () => modal.close()
+    },
+    {
+      label: 'Submit',
+      primary: true,
+      callback: () => {
+        const form = document.getElementById('my-form') as HTMLFormElement;
+        const formData = new FormData(form);
+        console.log(Object.fromEntries(formData));
+        modal.close();
+      }
+    }
+  ]
+});
+
+modal.open();
 ```
 
-### LLM Integration
+### Theme Management
 ```typescript
-import { 
-  createLLMClient, 
-  ChatContext, 
-  ChatManager 
-} from 'claude-utility-library/llm';
+import { createThemeManager, defaultLightTheme, defaultDarkTheme } from 'claude-utility-library/themes';
 
-// Create a client for OpenAI
-const client = createLLMClient({
-  modelId: 'gpt-4',
-  provider: 'openai',
-  apiKey: 'your-api-key',
-  maxTokens: 1000
+// Create a theme manager with default themes
+const themeManager = createThemeManager({
+  defaultTheme: 'system', // 'light', 'dark', or 'system'
+  storageKey: 'my-app-theme'
 });
 
-// Create a chat manager
-const context = new ChatContext();
-const chatManager = new ChatManager(client, context, {
-  modelId: 'gpt-4',
-  provider: 'openai',
-  apiKey: 'your-api-key'
+// Create a custom theme
+themeManager.registerTheme({
+  id: 'custom-blue',
+  name: 'Custom Blue',
+  isDark: false,
+  colors: {
+    ...defaultLightTheme.colors,
+    primary: '#1976d2',
+    secondary: '#42a5f5'
+  },
+  fonts: defaultLightTheme.fonts,
+  spacing: defaultLightTheme.spacing,
+  borders: defaultLightTheme.borders,
+  breakpoints: defaultLightTheme.breakpoints,
+  animation: defaultLightTheme.animation,
+  shadows: defaultLightTheme.shadows
 });
 
-// Send a message with streaming
-const response = await chatManager.sendMessage('Hello, can you help me with something?', {
-  streamingCallback: (event) => {
-    if (event.type === 'text') {
-      console.log('Received:', event.text);
-    }
+// Apply a theme
+themeManager.applyTheme('custom-blue');
+
+// Toggle between light and dark mode
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  themeManager.toggleDarkMode();
+});
+
+// Listen for theme changes
+themeManager.addThemeChangeListener((theme) => {
+  console.log(`Theme changed to: ${theme.name}`);
+});
+```
+
+### Search Algorithms
+```typescript
+import { SearchIndex, KnowledgeBaseFinder } from 'claude-utility-library/search';
+
+// Create and populate a search index
+const searchIndex = new SearchIndex({
+  fieldWeights: {
+    title: 3.0,
+    content: 1.0,
+    tags: 2.0
   }
 });
-```
 
-### Logging
-```typescript
-import { 
-  createLogger, 
-  ConsoleTransport, 
-  LocalStorageTransport, 
-  LogLevel 
-} from 'claude-utility-library/logging';
+searchIndex.addDocuments([
+  {
+    id: '1',
+    title: 'Setting up a MacBook for Development',
+    content: 'This guide covers how to set up a new MacBook for software development...',
+    tags: ['macbook', 'setup', 'development']
+  },
+  {
+    id: '2',
+    title: 'Troubleshooting Windows Network Issues',
+    content: 'Common Windows networking problems and how to fix them...',
+    tags: ['windows', 'network', 'troubleshooting']
+  }
+]);
 
-// Create a logger with multiple transports
-const logger = createLogger({
-  transports: [
-    new ConsoleTransport(),
-    new LocalStorageTransport('app_logs', 100)
-  ],
-  minLevel: LogLevel.INFO,
-  defaultTags: ['app']
+// Search for documents
+const results = searchIndex.search('macbook development setup', { limit: 5 });
+console.log(results);
+
+// Process user notes to find matching knowledge base articles
+const knowledgeBase = new KnowledgeBaseFinder({
+  documents: searchIndex.getAllDocuments(),
+  categoryWeights: {
+    hardware: 1.2,
+    software: 1.0
+  }
 });
 
-// Log at different levels
-logger.info('Application started', { version: '1.0.0' });
-logger.warn('Resource usage high', { cpuUsage: '85%' });
-logger.error('Operation failed', { operation: 'data-sync' });
+// Find matches based on user notes
+const matches = knowledgeBase.findMatchesForUserNotes(
+  "Customer's MacBook won't connect to WiFi after recent OS update"
+);
 
-// Time an operation
-logger.time('database-query', () => {
-  // Do something expensive
-  return result;
-});
-
-// Create a child logger for a component
-const authLogger = logger.child({
-  tags: ['auth'],
-  contextProvider: () => ({ userId: getCurrentUserId() })
-});
+console.log(matches.processedInfo); // Extracted categories, tags, and key terms
+console.log(matches.results); // Ranked matching documents
 ```
 
 ## API Documentation
+### Formatting
+Text formatting and colorizing utilities:
+
+- `colorize` - Utility for colorizing text in terminal and browser console
+- `parseJSON` - Type-safe JSON parsing with error handling
+- `parseCSV` - Parse CSV data with various options
+- `csvToJSON` - Convert CSV to JSON objects
+- `jsonToCSV` - Convert JSON objects to CSV
+- `formatFileSize` - Format byte size to human-readable string
+- `formatDate` - Format dates with custom patterns
+- `truncateText` - Truncate text with ellipsis
+- `toTitleCase` - Convert text to title case
+
+### Modals and UI
+UI components for interactive interfaces:
+
+- `Modal` - Custom modal dialog component
+- `alert` - Show an alert dialog
+- `confirm` - Show a confirmation dialog
+- `prompt` - Show a prompt dialog for user input
+- `toast` - Show toast notifications
+- `banner` - Show banner notifications
+- `showLoading` - Show a loading indicator
+
+### Themes
+Theme management system:
+
+- `ThemeManager` - Manage multiple themes with CSS variables
+- `createThemeManager` - Create a theme manager with defaults
+- `defaultLightTheme` - Standard light theme
+- `defaultDarkTheme` - Standard dark theme
+- `generateThemeFromColor` - Generate a theme from a base color
+- `themePresets` - Pre-defined theme variants
+
+### Search
+Text search and knowledge base matching:
+
+- `SearchIndex` - Fast text search with TF-IDF ranking
+- `KnowledgeBaseFinder` - Find matches in knowledge base articles
+- `tokenizeText` - Split text into meaningful tokens
+- `levenshteinDistance` - Calculate string edit distance
+- `stringSimilarity` - Calculate similarity between strings
+- `findBestMatch` - Find best fuzzy match in a list
+- `findAutocompleteSuggestions` - Generate autocomplete suggestions
+- `filterAndRankDocuments` - Filter and rank documents by relevance
+
 ### Monitoring
 The monitoring module provides tools for tracking system performance:
 
