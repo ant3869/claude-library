@@ -1,4 +1,4 @@
-# Claude Utility Library
+# Claude Library
 A comprehensive TypeScript utility library providing robust tools for system monitoring, networking, DOM manipulation, server-side operations, benchmarking, LLM management, logging, text formatting, UI components, theming, and search algorithms.
 
 ## Features
@@ -20,15 +20,15 @@ A comprehensive TypeScript utility library providing robust tools for system mon
 
 ## Installation
 ```bash
-npm install claude-utility-library
+npm install claude-library
 # or
-yarn add claude-utility-library
+yarn add claude-library
 ```
 
 ## Usage Examples
 ### System Monitoring
 ```typescript
-import { BrowserPerformanceMonitor, PerformanceAnalyzer } from 'claude-utility-library/monitoring';
+import { BrowserPerformanceMonitor, PerformanceAnalyzer } from 'claude-library/monitoring';
 
 // Create a performance monitor
 const monitor = new BrowserPerformanceMonitor({
@@ -51,7 +51,7 @@ monitor.stop();
 
 ### Text Formatting and Colorizing
 ```typescript
-import { colorize, parseCSV, csvToJSON } from 'claude-utility-library/formatting';
+import { colorize, parseCSV, csvToJSON } from 'claude-library/formatting';
 
 // Colorize console output
 console.log(...colorize.browserSuccess('Operation successful!'));
@@ -69,7 +69,7 @@ console.log(jsonData);
 
 ### UI Components (Modals, Toasts)
 ```typescript
-import { Modal, alert, confirm, toast } from 'claude-utility-library/modals';
+import { Modal, alert, confirm, toast } from 'claude-library/modals';
 
 // Show a simple alert
 await alert('Operation completed successfully!', 'Success');
@@ -125,7 +125,7 @@ modal.open();
 
 ### Theme Management
 ```typescript
-import { createThemeManager, defaultLightTheme, defaultDarkTheme } from 'claude-utility-library/themes';
+import { createThemeManager, defaultLightTheme, defaultDarkTheme } from 'claude-library/themes';
 
 // Create a theme manager with default themes
 const themeManager = createThemeManager({
@@ -167,7 +167,7 @@ themeManager.addThemeChangeListener((theme) => {
 
 ### Search Algorithms
 ```typescript
-import { SearchIndex, KnowledgeBaseFinder } from 'claude-utility-library/search';
+import { SearchIndex, KnowledgeBaseFinder } from 'claude-library/search';
 
 // Create and populate a search index
 const searchIndex = new SearchIndex({
@@ -333,7 +333,7 @@ This library is compatible with modern browsers (Chrome, Firefox, Safari, Edge) 
 The library is written in TypeScript and provides comprehensive type definitions for all functionality.
 
 ## License
-MIT License
+ISC License
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.

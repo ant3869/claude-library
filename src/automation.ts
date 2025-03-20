@@ -762,7 +762,6 @@ export interface AutomationTask {
     start: () => void; 
     stop: () => void;
   } => {
-    let lastRun = 0;
     let changedFiles: Set<string> = new Set();
     let changeTimeout: any = null;
     let running = false;
@@ -773,7 +772,6 @@ export interface AutomationTask {
       .withExecute(async () => {
         const filesToProcess = [...changedFiles];
         changedFiles.clear();
-        lastRun = Date.now();
         
         await executeFunction(filesToProcess);
       })
@@ -844,7 +842,6 @@ export interface AutomationTask {
   export const createEventTask = <T>(
     id: string,
     name: string,
-    eventName: string,
     executeFunction: (eventData: T) => Promise<void>,
     options: {
       description?: string;
@@ -1140,7 +1137,7 @@ export interface AutomationTask {
     /**
      * Extract text content from HTML using a selector
      */
-    static extractText(html: string, selector: string): string[] {
+    static extractText(html: string): string[] {
       // In a real implementation, you would use a library like cheerio or parse5
       // This is a very simplified example that doesn't actually use the selector
       const matches = html.match(/<p>(.*?)<\/p>/g);

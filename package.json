@@ -1,0 +1,60 @@
+{
+  "name": "claude-library",
+  "version": "1.0.0",
+  "description": "A comprehensive TypeScript utility library providing robust tools for system monitoring, networking, DOM manipulation, server-side operations, benchmarking, LLM management, logging, text formatting, UI components, theming, and search algorithms.",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "rollup -c",
+    "prepare": "npm run build",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ant3869/claude-library.git"
+  },
+  "keywords": [
+    "typescript",
+    "utilities",
+    "frontend",
+    "backend",
+    "monitoring",
+    "networking",
+    "dom",
+    "benchmarking",
+    "llm",
+    "logging",
+    "formatting",
+    "ui",
+    "theming",
+    "search"
+  ],
+  "author": "Claude Library Team",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ant3869/claude-library/issues"
+  },
+  "homepage": "https://github.com/ant3869/claude-library#readme",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "rollup": "^4.36.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

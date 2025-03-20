@@ -796,7 +796,6 @@ export interface AutoCorrectOptions {
     private readonly element: HTMLInputElement | HTMLTextAreaElement;
     private options: AutoCorrectOptions;
     private suggestionBox: HTMLElement | null = null;
-    private correctionTimeout: number | null = null;
     private eventListeners: Array<{target: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions}> = [];
     
     constructor(
@@ -853,7 +852,7 @@ export interface AutoCorrectOptions {
      */
     private addEventListeners(): void {
       // Debounced input event for checking text
-      const inputListener = this.debounce((e: Event) => {
+      const inputListener = this.debounce(() => {
         this.checkText();
       }, this.options.suggestionDelay || 500);
       
@@ -861,7 +860,7 @@ export interface AutoCorrectOptions {
       this.eventListeners.push({target: this.element, type: 'input', listener: inputListener});
       
       // Blur event to hide suggestions
-      const blurListener = (e: Event) => {
+      const blurListener = () => {
         this.hideSuggestions();
       };
       
@@ -922,9 +921,6 @@ export interface AutoCorrectOptions {
         this.hideSuggestions();
         return;
       }
-      
-      // Get context by extracting surrounding text
-      const context = text.split(/\s+/);
       
       // Check the word for corrections
       const result = this.engine.correctText(wordInfo.word);
